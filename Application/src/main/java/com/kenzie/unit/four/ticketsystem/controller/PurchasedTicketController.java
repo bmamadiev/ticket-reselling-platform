@@ -7,14 +7,13 @@ import com.kenzie.unit.four.ticketsystem.service.ReservedTicketService;
 import com.kenzie.unit.four.ticketsystem.service.model.PurchasedTicket;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.UUID.randomUUID;
 
 @RestController
 @RequestMapping("/purchasedtickets")
@@ -32,13 +31,18 @@ public class PurchasedTicketController {
 
     // TODO - Task 5: purchaseTicket() - POST
     // Add the correct annotation
+    @PostMapping
     public ResponseEntity<PurchasedTicketResponse> purchaseTicket(
             @RequestBody PurchasedTicketCreateRequest purchasedTicketCreateRequest) {
 
         // Add your code here
+        PurchasedTicket purchasedTicket = new PurchasedTicket(randomUUID().toString(), purchasedTicketCreateRequest.getTicketId(), LocalDateTime.now().toString(), purchasedTicketCreateRequest.getPricePaid());
+        purchasedTicketService.purchaseTicket(purchasedTicket.getTicketId(), purchasedTicket.getPricePaid());
+
+        PurchasedTicketResponse response = createPurchaseTicketResponse(purchasedTicket);
 
         // Return your ReservedTicketResponse instead of null
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/concerts/{concertId}")

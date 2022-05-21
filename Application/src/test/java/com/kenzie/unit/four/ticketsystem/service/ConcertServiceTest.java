@@ -1,17 +1,22 @@
 package com.kenzie.unit.four.ticketsystem.service;
 
 import com.kenzie.unit.four.ticketsystem.config.CacheStore;
+import com.kenzie.unit.four.ticketsystem.controller.model.ConcertUpdateRequest;
 import com.kenzie.unit.four.ticketsystem.repositories.ConcertRepository;
 import com.kenzie.unit.four.ticketsystem.repositories.model.ConcertRecord;
+import com.kenzie.unit.four.ticketsystem.repositories.model.ReserveTicketRecord;
 import com.kenzie.unit.four.ticketsystem.service.model.Concert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.mockito.Mockito.mock;
@@ -146,11 +151,66 @@ public class ConcertServiceTest {
      *  ------------------------------------------------------------------------ **/
 
     // Write additional tests here
+    @Test
+    void updateConcert() {
+        String id = UUID.randomUUID().toString();
+        String name = "concertname1";
+        String date = LocalDate.now().toString();
+        Double ticketBasePrice = 90.0;
+
+        ConcertRecord record = new ConcertRecord();
+        record.setId(id);
+        record.setName(name);
+        record.setDate(date);
+        record.setTicketBasePrice(ticketBasePrice);
+        record.setReservationClosed(true);
+
+        Concert concert = new Concert(
+                record.getId(), record.getName(),
+                record.getDate(), record.getTicketBasePrice(),
+                record.getReservationClosed());
+
+        ArgumentCaptor<ConcertRecord> recordCaptor = ArgumentCaptor.forClass(ConcertRecord.class);
+
+        concertService.updateConcert(concert);
+        verify(concertRepository).existsById(concert.getId());
+        //verify(cacheStore).evict(concert.getId());
+        //verify(concertRepository).save(recordCaptor.capture());
+
+//        verify(cache).evict(concert.getId());
+//        verify(concertRepository).save(record);
+        //verify(concertService).updateConcert(concert);
+
+    }
 
     /** ------------------------------------------------------------------------
      *  concertService.deleteConcert
      *  ------------------------------------------------------------------------ **/
 
     // Write additional tests here
+    @Test
+    void deleteConcert() {
+        String id = UUID.randomUUID().toString();
+        String name = "concertname1";
+        String date = LocalDate.now().toString();
+        Double ticketBasePrice = 90.0;
 
+        ConcertRecord record = new ConcertRecord();
+        record.setId(id);
+        record.setName(name);
+        record.setDate(date);
+        record.setTicketBasePrice(ticketBasePrice);
+        record.setReservationClosed(true);
+
+        Concert concert = new Concert(
+                record.getId(), record.getName(),
+                record.getDate(), record.getTicketBasePrice(),
+                record.getReservationClosed());
+
+        ArgumentCaptor<ConcertRecord> recordCaptor = ArgumentCaptor.forClass(ConcertRecord.class);
+
+        concertService.deleteConcert(concert.getId());
+        verify(concertRepository).deleteById(concert.getId());
+        verify(cacheStore).evict(concert.getId());
+    }
 }
