@@ -116,7 +116,7 @@ public class ReservedTicketServiceTest {
         record1.setDateOfReservation("record1date");
         record1.setDateReservationClosed("closed1date");
         record1.setReservationClosed(false);
-        record1.setPurchasedTicket(true);
+        record1.setPurchasedTicket(false);
 
         ReserveTicketRecord record2 = new ReserveTicketRecord();
         record2.setTicketId(randomUUID().toString());
@@ -139,13 +139,11 @@ public class ReservedTicketServiceTest {
         when(reservedTicketRepository.findAll()).thenReturn(records);
         // WHEN
 
-        when(reservedTicketService.findAllReservationTickets()).thenReturn(reservedTicketList);
-
-        //List<ReservedTicket> unclosedReservationTickets = reservedTicketService.findAllUnclosedReservationTickets();
+        List<ReservedTicket> unclosedReservationTickets = reservedTicketService.findAllUnclosedReservationTickets();
 
         //THEN
-        //Assertions.assertNotNull(unclosedReservationTickets, "The reserved ticket list is returned");
-        //Assertions.assertEquals(1, unclosedReservationTickets.size(), "There are two reserved tickets");
+        Assertions.assertNotNull(unclosedReservationTickets, "The reserved ticket list is returned");
+        Assertions.assertEquals(1, unclosedReservationTickets.size(), "There are two reserved tickets");
     }
 
 

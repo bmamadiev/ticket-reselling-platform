@@ -42,7 +42,6 @@ public class ReservedTicketService {
                     record.getPurchasedTicket()));
         }
 
-
         return reservedTickets;
     }
 
