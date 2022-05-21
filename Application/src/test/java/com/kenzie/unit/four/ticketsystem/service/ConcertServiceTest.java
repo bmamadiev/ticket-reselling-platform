@@ -117,7 +117,7 @@ public class ConcertServiceTest {
     }
 
     @Test
-    void findByConcertIdNull() {
+    void findByConcertIdNotNull() {
         // GIVEN
         String concertId = randomUUID().toString();
 
@@ -127,13 +127,16 @@ public class ConcertServiceTest {
         record.setDate("recorddate");
         record.setTicketBasePrice(10.0);
         record.setReservationClosed(true);
-        when(concertRepository.findById(concertId)).thenReturn(Optional.of(record));
+
+        Concert cashedConcert = new Concert(record.getId(), record.getName(), record.getDate(), record.getTicketBasePrice(), record.getReservationClosed());
+
         // WHEN
-        Concert concert = cacheStore.get(record.getId());
-        when(cacheStore.get(concertId)).thenReturn(concert);
+        when(cacheStore.get(concertId)).thenReturn(cashedConcert);
+
+        Concert newConcert = concertService.findByConcertId(concertId);
 
         // THEN
-        Assertions.assertNull(concert, "The concert is null");
+        Assertions.assertNotNull(newConcert, "The concert is not null");
     }
 
 
