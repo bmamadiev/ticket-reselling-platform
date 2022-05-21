@@ -105,6 +105,7 @@ public class ConcertServiceTest {
         when(concertRepository.findById(concertId)).thenReturn(Optional.of(record));
         // WHEN
         Concert concert = concertService.findByConcertId(concertId);
+        when(cacheStore.get(concertId)).thenReturn(concert);
 
         // THEN
         Assertions.assertNotNull(concert, "The concert is returned");
@@ -114,6 +115,27 @@ public class ConcertServiceTest {
         Assertions.assertEquals(record.getTicketBasePrice(), concert.getTicketBasePrice(), "The concert ticket price matches");
         Assertions.assertEquals(record.getReservationClosed(), concert.getReservationClosed(), "The concert reservation closed flag matches");
     }
+
+    @Test
+    void findByConcertIdNull() {
+        // GIVEN
+        String concertId = randomUUID().toString();
+
+        ConcertRecord record = new ConcertRecord();
+        record.setId(concertId);
+        record.setName("concertname");
+        record.setDate("recorddate");
+        record.setTicketBasePrice(10.0);
+        record.setReservationClosed(true);
+        when(concertRepository.findById(concertId)).thenReturn(Optional.of(record));
+        // WHEN
+        Concert concert = cacheStore.get(record.getId());
+        when(cacheStore.get(concertId)).thenReturn(concert);
+
+        // THEN
+        Assertions.assertNull(concert, "The concert is null");
+    }
+
 
     /** ------------------------------------------------------------------------
      *  concertService.addNewConcert
@@ -153,34 +175,30 @@ public class ConcertServiceTest {
     // Write additional tests here
     @Test
     void updateConcert() {
-        String id = UUID.randomUUID().toString();
-        String name = "concertname1";
-        String date = LocalDate.now().toString();
-        Double ticketBasePrice = 90.0;
+        String concertId = randomUUID().toString();
 
+        Concert concert = new Concert(concertId, "concertname", "recorddate", 10.0, false);
         ConcertRecord record = new ConcertRecord();
-        record.setId(id);
-        record.setName(name);
-        record.setDate(date);
-        record.setTicketBasePrice(ticketBasePrice);
-        record.setReservationClosed(true);
+        record.setId(concertId);
+        record.setName(concert.getName());
+        record.setDate(concert.getDate());
+        record.setTicketBasePrice(concert.getTicketBasePrice());
+        record.setReservationClosed(concert.getReservationClosed());
 
-        Concert concert = new Concert(
-                record.getId(), record.getName(),
-                record.getDate(), record.getTicketBasePrice(),
-                record.getReservationClosed());
-
-        ArgumentCaptor<ConcertRecord> recordCaptor = ArgumentCaptor.forClass(ConcertRecord.class);
-
+        // WHEN
+        when(concertRepository.existsById(concertId)).thenReturn(true);
         concertService.updateConcert(concert);
-        verify(concertRepository).existsById(concert.getId());
-        //verify(cacheStore).evict(concert.getId());
-        //verify(concertRepository).save(recordCaptor.capture());
 
-//        verify(cache).evict(concert.getId());
-//        verify(concertRepository).save(record);
-        //verify(concertService).updateConcert(concert);
+        // THEN
+        verify(concertRepository).existsById(concertId);
+        verify(concertRepository).save(record);
 
+        Assertions.assertNotNull(record, "The concert record is returned");
+        Assertions.assertEquals(record.getId(), concert.getId(), "The concert id matches");
+        Assertions.assertEquals(record.getName(), concert.getName(), "The concert name matches");
+        Assertions.assertEquals(record.getDate(), concert.getDate(), "The concert date matches");
+        Assertions.assertEquals(record.getTicketBasePrice(), concert.getTicketBasePrice(), "The concert ticket price matches");
+        Assertions.assertEquals(record.getReservationClosed(), concert.getReservationClosed(), "The concert reservation closed flag matches");
     }
 
     /** ------------------------------------------------------------------------
