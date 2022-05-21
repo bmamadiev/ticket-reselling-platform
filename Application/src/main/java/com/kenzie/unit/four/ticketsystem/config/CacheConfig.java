@@ -11,6 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
     @Bean
     public CacheStore concertCache() {
-        return new CacheStore(320, TimeUnit.SECONDS);
+        return new CacheStore(120, TimeUnit.SECONDS);
     }
 }

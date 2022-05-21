@@ -38,7 +38,7 @@ class CloseReservationTaskTest {
 
         reservedTicketService.reserveTicket(reservedTicket);
 
-        Thread.sleep(1000);
+        Thread.sleep(10000);
 
         ReservedTicket persistedReservedTicket = reservedTicketService.findByReserveTicketId(ticketId);
 
@@ -61,7 +61,7 @@ class CloseReservationTaskTest {
         reservedTicketService.reserveTicket(reservedTicket);
         reservedTicketService.updateReserveTicket(reservedTicket);
 
-        Thread.sleep(3000);
+        Thread.sleep(10000);
 
         ReservedTicket persistedReservedTicket = reservedTicketService.findByReserveTicketId(ticketId);
 
