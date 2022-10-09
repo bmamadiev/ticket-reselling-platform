@@ -1,3 +1,3 @@
-# ATA-Unit-Four-Project
+# Ticket Reselling Platform
 
-Follow the instructions in your unit 4 assignment page.
+We are building a ticket reselling platform where people list their tickets up for sale, and the user can sell them for a cut of the profit! 
